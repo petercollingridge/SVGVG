@@ -2,6 +2,15 @@
     fill: #eee;
 }
 
+.svgvg-series-group {
+    fill: none;
+    stroke-width: 2;
+}
+
+.svgvg-series-1 {
+    stroke: steelblue;
+}
+
 .svgvg-axis {
     stroke: black;
     stroke-width: 1;
