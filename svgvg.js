@@ -1,19 +1,60 @@
+function getRange(data, label) {
+    var minX = 0;
+    var maxX = 1;
+    for (var i = 0; i < data.length; i++) {
+        var values = data[i][label];
+        if (values) {
+            for (var j = 0; j < values.length; j++) {
+                if (values[j] < minX) {
+                    minX = values[j];
+                } else if (values[j] > maxX) {
+                    maxX = values[j];
+                }
+            }
+        }
+    }
+    return maxX - minX;
+}
+
 Vue.component('svg-vg', {
     props: ['width', 'height', 'series'],
     data: function () {
         return {
-            yAxisY: this.height - 10
+            x1: 10,
+            x2: this.width - 1,
+            y1: 1,
+            y2: this.height - 10
         };
     },
+    computed: {
+        rangeX: function() {
+            return getRange(this.series, 'x');
+        },
+        rangeY: function() {
+            return getRange(this.series, 'y');
+        },
+        scaleX: function() {
+            return (this.x2 - this.x1) / this.rangeX;
+        },
+        scaleY: function() {
+            return (this.y2 - this.y1) / this.rangeY;
+        }
+    },
     methods: {
+        getX: function(x) {
+            return this.x1 + this.scaleX * x;
+        },
+        getY: function(y) {
+            return this.y2 - this.scaleY * y;
+        },
         pathString: function(data) {
             var d = "";
             var x = data.x;
             var y = data.y;
-            
+
             for (var i = 0; i < y.length; i++) {
                 d += i ? "L" : "M";
-                d += x[i] + " "  + y[i];
+                d += this.getX(x[i]) + " "  + this.getY(y[i]);
             }
 
             return d;
@@ -27,8 +68,8 @@ Vue.component('svg-vg', {
         </g>
 
         <g class="svgvg-axis">
-            <line x1="10" y1="0" x2="10" :y2="yAxisY"/>
-            <line class="svgvg-axis" x1="10" :y1="yAxisY" :x2="width" :y2="yAxisY"/>
+            <line :x1="x1" :y1="y1" :x2="x1" :y2="y2"/>
+            <line :x1="x1" :y1="y2" :x2="x2" :y2="y2"/>
         </g>
     </svg>`
 })
