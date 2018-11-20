@@ -14,4 +14,17 @@
 .svgvg-axis {
     stroke: black;
     stroke-width: 1;
+    stroke-linecap: square;
+}
+
+.svgvg-axis-ticks line {
+    stroke: black;
+    stroke-width: 0.5;
+}
+
+.svgvg-axis-ticks text {
+    font-size: 6px;
+    text-anchor: middle;
+    alignment-baseline: hanging;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
