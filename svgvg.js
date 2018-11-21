@@ -16,6 +16,33 @@ function getRange(data, label) {
     return [minX, maxX];
 }
 
+function getTickSize(data1, data2, position1, position2) {
+    var maxDivisions = Math.max(2, Math.floor(Math.abs(position2 - position1) / 25));
+    var unitValue = Math.pow(10, Math.floor(Math.log10(data2 - data1) - 1));
+
+    // Increase unit value only using nice numbers
+    if (unitValue < data2 / 20) { unitValue *= 2; }
+    if (unitValue < data2 / 16) { unitValue *= 1.25; }
+
+    while (unitValue < data2 / maxDivisions) { unitValue *= 2; }
+
+    return unitValue;
+}
+
+function getTicks(data1, data2, tickSize) {
+    var minTick = Math.floor(data1 / tickSize) * tickSize;
+    var maxTick = Math.ceil(data2 / tickSize) * tickSize;
+
+    var ticks = [minTick];
+    var tick = minTick;
+    while (tick < maxTick) {
+        tick += tickSize;
+        ticks.push(tick);
+    }
+
+    return ticks;
+}
+
 Vue.component('svg-vg', {
     props: ['width', 'height', 'series'],
     data: function () {
@@ -33,18 +60,6 @@ Vue.component('svg-vg', {
         rangeY: function() {
             return getRange(this.series, 'y');
         },
-        xTickSize: function() {
-            var maxDivisions = Math.max(2, Math.floor((this.x2 - this.x1) / 25));
-            var unitValue = Math.pow(10, Math.floor(Math.log10(this.rangeX[1] - this.rangeX[0]) - 1));
-
-            // Increase unit value only using nice numbers
-            if (unitValue < this.rangeX[1] / 20) { unitValue *= 2; }
-            if (unitValue < this.rangeX[1] / 16) { unitValue *= 1.25; }
-
-            while (unitValue < this.rangeX[1] / maxDivisions) { unitValue *= 2; }
-
-            return unitValue;
-        },
         scaleX: function() {
             return (this.x2 - this.x1) / (this.rangeX[1] - this.rangeX[0]);
         },
@@ -52,17 +67,12 @@ Vue.component('svg-vg', {
             return (this.y2 - this.y1) / (this.rangeY[1] - this.rangeY[0]);
         },
         xTicks: function() {
-            var minTick = Math.floor(this.rangeX[0] / this.xTickSize) * this.xTickSize;
-            var maxTick = Math.ceil(this.rangeX[1] / this.xTickSize) * this.xTickSize;
-
-            var xTicks = [minTick];
-            var tick = minTick;
-            while (tick < maxTick) {
-                tick += this.xTickSize;
-                xTicks.push(tick);
-            }
-
-            return xTicks;
+            var xTickSize = getTickSize(this.rangeX[0], this.rangeX[1], this.x1, this.x2);
+            return getTicks(this.rangeX[0], this.rangeX[1], xTickSize);
+        },
+        yTicks: function() {
+            var yTickSize = getTickSize(this.rangeY[0], this.rangeY[1], this.y2, this.y1);
+            return getTicks(this.rangeY[0], this.rangeY[1], yTickSize);
         }
     },
     methods: {
@@ -100,7 +110,11 @@ Vue.component('svg-vg', {
         <g class="svgvg-axis-ticks">
             <g v-for="x in xTicks">
                 <line :x1="getX(x)" :y1="y2" :x2="getX(x)" :y2="y2 + 3" />
-                <text :x="getX(x)" :y="y2 + 4">{{x}}</text>
+                <text class="x-tick-text" :x="getX(x)" :y="y2 + 4">{{x}}</text>
+            </g>
+            <g v-for="y in yTicks">
+                <line :x1="x1" :y1="getY(y)" :x2="x1 - 3" :y2="getY(y)" />
+                <text class="y-tick-text" :x="x1 - 4" :y="getY(y)">{{y}}</text>
             </g>
         </g>
 

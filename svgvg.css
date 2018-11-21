@@ -9,6 +9,7 @@
 
 .svgvg-series-1 {
     stroke: steelblue;
+    stroke-linecap: round;
 }
 
 .svgvg-axis {
@@ -24,7 +25,15 @@
 
 .svgvg-axis-ticks text {
     font-size: 6px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.svgvg-axis-ticks .x-tick-text {
     text-anchor: middle;
     alignment-baseline: hanging;
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.svgvg-axis-ticks .y-tick-text {
+    text-anchor: end;
+    alignment-baseline: central;
 }
