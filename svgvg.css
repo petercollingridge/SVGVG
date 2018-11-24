@@ -5,11 +5,16 @@
 .svgvg-series-group {
     fill: none;
     stroke-width: 2;
+    stroke-linecap: round;
+    opacity: 0.8;
 }
 
 .svgvg-series-1 {
     stroke: steelblue;
-    stroke-linecap: round;
+}
+
+.svgvg-series-2 {
+    stroke: green;
 }
 
 .svgvg-axis {

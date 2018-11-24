@@ -1,19 +1,22 @@
 function getRange(data, label) {
-    var minX = 0;
-    var maxX = 1;
+    var minValue = 0;
+    var maxValue = 1;
+
     for (var i = 0; i < data.length; i++) {
         var values = data[i][label];
-        if (values) {
-            for (var j = 0; j < values.length; j++) {
-                if (values[j] < minX) {
-                    minX = values[j];
-                } else if (values[j] > maxX) {
-                    maxX = values[j];
-                }
+        if (!values) { continue; }
+
+        var n = values.length;
+        for (var j = 0; j < n; j++) {
+            if (values[j] < minValue) {
+                minValue = values[j];
+            } else if (values[j] > maxValue) {
+                maxValue = values[j];
             }
         }
     }
-    return [minX, maxX];
+
+    return [minValue, maxValue];
 }
 
 function getTickSize(data1, data2, position1, position2) {
@@ -48,17 +51,48 @@ Vue.component('svg-vg', {
     data: function () {
         return {
             x1: 12,
-            x2: this.width - 2,
-            y1: 2,
+            x2: this.width - 5,
+            y1: 5,
             y2: this.height - 12,
         };
     },
     computed: {
+        processedSeries: function() {
+            // Fill in gaps if y values not given
+            var allSeries = [];
+
+            for (var i = 0; i < this.series.length; i++) {
+                var series = this.series[i];
+                var newSeries = {};
+
+                // If there's no x data then there's nothing to plot
+                if (series.y) {
+                    newSeries.y = series.y.slice();
+                } else {
+                    continue;
+                }
+                
+                // If there's no y data then add an array of 0 - n
+                if (series.x) {
+                    newSeries.x = series.x.slice();
+                } else {
+                    newSeries.x = [];
+                    for (var j = 0; j < newSeries.y.length; j++) {
+                        newSeries.x.push(j);
+                    }
+                }
+                
+                newSeries.name = series.name || ("Series " + (i + 1));
+                allSeries.push(newSeries);
+            }
+
+            return allSeries;
+        },
         rangeX: function() {
-            return getRange(this.series, 'x');
+            return getRange(this.processedSeries, 'x');
         },
         rangeY: function() {
-            return getRange(this.series, 'y');
+            return getRange(this.processedSeries, 'y');
         },
         scaleX: function() {
             return (this.x2 - this.x1) / (this.rangeX[1] - this.rangeX[0]);
@@ -99,7 +133,7 @@ Vue.component('svg-vg', {
         <rect class="svgvg-background" :width="width" :height="height"/>
 
         <g class="svgvg-series-group">
-            <path :class="['svgvg-series-' + (index + 1)]" v-for="(seriesData, index) in series" :d="pathString(seriesData)"/>
+            <path :class="['svgvg-series-' + (index + 1)]" v-for="(seriesData, index) in processedSeries" :d="pathString(seriesData)"/>
         </g>
 
         <g class="svgvg-axis">
