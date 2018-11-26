@@ -28,17 +28,29 @@
     stroke-width: 0.5;
 }
 
+.svgvg {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
 .svgvg-axis-ticks text {
     font-size: 6px;
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
 .svgvg-axis-ticks .x-tick-text {
     text-anchor: middle;
-    alignment-baseline: hanging;
+    dominant-baseline: hanging;
 }
 
 .svgvg-axis-ticks .y-tick-text {
     text-anchor: end;
-    alignment-baseline: central;
+    dominant-baseline: central;
+}
+
+.svgvg-axis-labels {
+    font-size: 10px;
+    text-anchor: middle;
+}
+
+.svgvg-y-axis-label {
+    dominant-baseline: hanging;
 }

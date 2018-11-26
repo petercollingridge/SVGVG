@@ -10,9 +10,7 @@
     <body>
 
     <div id="app" style="width:600px;">
-        <svg-vg width="300" height="200" :series="series">
-
-        </svg-vg>
+        <svg-vg width="300" height="200" :series="series" :params="params"></svg-vg>
     </div>
 
 <script src="svgvg.js"></script>
@@ -29,7 +27,11 @@
                 {
                     y: [3, 2, 4, 1, 5, 9]
                 }
-            ]
+            ],
+            params: {
+                xAxisLabel: 'Time',
+                yAxisLabel: 'Population size',
+            }
         }
     });
 </script>

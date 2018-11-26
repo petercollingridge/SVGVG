@@ -47,16 +47,25 @@ function getTicks(data1, data2, tickSize) {
 }
 
 Vue.component('svg-vg', {
-    props: ['width', 'height', 'series'],
+    props: ['width', 'height', 'series', 'params'],
     data: function () {
         return {
-            x1: 12,
             x2: this.width - 5,
             y1: 5,
-            y2: this.height - 12,
+            xAxisLabel: this.params.xAxisLabel,
+            yAxisLabel: this.params.yAxisLabel,
         };
     },
     computed: {
+        x1: function() {
+            return 12 + (this.yAxisLabel ? 12 : 0);
+        },
+        y2: function() {
+            return this.height - 12 - (this.xAxisLabel ? 12 : 0);
+        },
+        yAxisLabelTransform: function() {
+            return "translate(3 " + ((this.y1 + this.y2) / 2) + ") rotate(270)";
+        },
         processedSeries: function() {
             // Fill in gaps if y values not given
             var allSeries = [];
@@ -132,10 +141,6 @@ Vue.component('svg-vg', {
     template: `<svg class="svgvg" xmlns="http://www.w3.org/2000/svg" :viewBox="0 + ' ' + 0 + ' ' + width + ' ' + height">
         <rect class="svgvg-background" :width="width" :height="height"/>
 
-        <g class="svgvg-series-group">
-            <path :class="['svgvg-series-' + (index + 1)]" v-for="(seriesData, index) in processedSeries" :d="pathString(seriesData)"/>
-        </g>
-
         <g class="svgvg-axis">
             <line :x1="x1" :y1="y1" :x2="x1" :y2="y2"/>
             <line :x1="x1" :y1="y2" :x2="x2" :y2="y2"/>
@@ -150,6 +155,15 @@ Vue.component('svg-vg', {
                 <line :x1="x1" :y1="getY(y)" :x2="x1 - 3" :y2="getY(y)" />
                 <text class="y-tick-text" :x="x1 - 4" :y="getY(y)">{{y}}</text>
             </g>
+        </g>
+
+        <g class="svgvg-axis-labels">
+            <text :x="(x1 + x2) / 2" :y="height - 3" :v-if="xAxisLabel">{{ xAxisLabel }}</text>
+            <text class="svgvg-y-axis-label" :transform="yAxisLabelTransform" x="0" y="0" :v-if="yAxisLabel">{{ yAxisLabel }}</text>
+        </g>
+
+        <g class="svgvg-series-group">
+            <path :class="['svgvg-series-' + (index + 1)]" v-for="(seriesData, index) in processedSeries" :d="pathString(seriesData)"/>
         </g>
 
     </svg>`
