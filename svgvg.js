@@ -1,6 +1,6 @@
 function getRange(data, label) {
     var minValue = 0;
-    var maxValue = 1;
+    var maxValue = 0;
 
     for (var i = 0; i < data.length; i++) {
         var values = data[i][label];
@@ -16,18 +16,27 @@ function getRange(data, label) {
         }
     }
 
+    // Need to maxValue > minValue in order for scaling to work
+    if (minValue === maxValue) {
+        if (minValue > 0) {
+            return [0, maxValue];
+        } else {
+            return [0, 1];
+        }
+    }
+
     return [minValue, maxValue];
 }
 
-function getTickSize(data1, data2, position1, position2) {
+function getTickSize(startValue, endValue, position1, position2) {
     var maxDivisions = Math.max(2, Math.floor(Math.abs(position2 - position1) / 25));
-    var unitValue = Math.pow(10, Math.floor(Math.log10(data2 - data1) - 1));
+    var unitValue = Math.pow(10, Math.floor(Math.log10(endValue - startValue) - 1));
 
     // Increase unit value only using nice numbers
-    if (unitValue < data2 / 20) { unitValue *= 2; }
-    if (unitValue < data2 / 16) { unitValue *= 1.25; }
+    if (unitValue < endValue / 20) { unitValue *= 2; }
+    if (unitValue < endValue / 16) { unitValue *= 1.25; }
 
-    while (unitValue < data2 / maxDivisions) { unitValue *= 2; }
+    while (unitValue < endValue / maxDivisions) { unitValue *= 2; }
 
     return unitValue;
 }
@@ -35,12 +44,13 @@ function getTickSize(data1, data2, position1, position2) {
 function getTicks(data1, data2, tickSize) {
     var minTick = Math.floor(data1 / tickSize) * tickSize;
     var maxTick = Math.ceil(data2 / tickSize) * tickSize;
-
+    var magnitude = Math.pow(10, -Math.floor(Math.log10(tickSize)));
+    
     var ticks = [minTick];
     var tick = minTick;
     while (tick < maxTick) {
         tick += tickSize;
-        ticks.push(tick);
+        ticks.push("" + Math.round(tick * magnitude) / magnitude);
     }
 
     return ticks;
