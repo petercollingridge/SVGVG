@@ -16,7 +16,30 @@
             </option>
         </select>
 
-        <svg-vg width="300" height="200" :series="series" :params="params"></svg-vg>
+        <br>
+        <label for="x-axis-label">x-axis label</label>
+        <input id="x-axis-label" v-model="xAxisLabel" />
+
+        <br>
+        <label for="y-axis-label">y-axis label</label>
+        <input id="y-axis-label" v-model="yAxisLabel" />
+
+        <br>
+        <label for="x-min-unit">Min x unit</label>
+        <input id="x-min-unit" v-model="xMinUnit" type="Number"/>
+
+        <br>
+        <label for="y-min-unit">Min y unit</label>
+        <input id="y-min-unit" v-model="yMinUnit" type="Number"/>
+
+        <svg-vg
+            width="300" height="200"
+            :series="series"
+            :x-axis-label="xAxisLabel"
+            :y-axis-label="yAxisLabel"
+            :x-min-unit="xMinUnit"
+            :y-min-unit="yMinUnit"
+        ></svg-vg>
     </div>
 
 <script src="svgvg.js"></script>
@@ -36,10 +59,10 @@
                     value: [{ y: [0.0003, 0.00035, 0.0004, 0.0001, 0.0005, 0.00033] }]
             }],
             selectedSeries: 0,
-            params: {
-                xAxisLabel: 'Time',
-                yAxisLabel: 'Population size',
-            }
+            xAxisLabel: '',
+            yAxisLabel: '',
+            xMinUnit: 0,
+            yMinUnit: 0,
         },
         computed: {
             series: function() {

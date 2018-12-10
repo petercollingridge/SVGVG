@@ -28,9 +28,11 @@ function getRange(data, label) {
     return [minValue, maxValue];
 }
 
-function getTickSize(startValue, endValue, position1, position2) {
+function getTickSize(startValue, endValue, position1, position2, minUnit) {
     var maxDivisions = Math.max(2, Math.floor(Math.abs(position2 - position1) / 25));
-    var unitValue = Math.pow(10, Math.floor(Math.log10(endValue - startValue) - 1));
+
+    minUnit = minUnit || 0;
+    var unitValue = Math.max(minUnit, Math.pow(10, Math.floor(Math.log10(endValue - startValue) - 1)));
 
     // Increase unit value only using nice numbers
     if (unitValue < endValue / 20) { unitValue *= 2; }
@@ -57,13 +59,11 @@ function getTicks(data1, data2, tickSize) {
 }
 
 Vue.component('svg-vg', {
-    props: ['width', 'height', 'series', 'params'],
+    props: ['width', 'height', 'series', 'xAxisLabel', 'yAxisLabel', 'xMinUnit', 'yMinUnit'],
     data: function () {
         return {
             x2: this.width - 5,
             y1: 5,
-            xAxisLabel: this.params.xAxisLabel,
-            yAxisLabel: this.params.yAxisLabel,
         };
     },
     computed: {
@@ -120,11 +120,12 @@ Vue.component('svg-vg', {
             return (this.y2 - this.y1) / (this.rangeY[1] - this.rangeY[0]);
         },
         xTicks: function() {
-            var xTickSize = getTickSize(this.rangeX[0], this.rangeX[1], this.x1, this.x2);
+            console.log(this.minUnit)
+            var xTickSize = getTickSize(this.rangeX[0], this.rangeX[1], this.x1, this.x2, this.xMinUnit);
             return getTicks(this.rangeX[0], this.rangeX[1], xTickSize);
         },
         yTicks: function() {
-            var yTickSize = getTickSize(this.rangeY[0], this.rangeY[1], this.y2, this.y1);
+            var yTickSize = getTickSize(this.rangeY[0], this.rangeY[1], this.y2, this.y1, this.yMinUnit);
             return getTicks(this.rangeY[0], this.rangeY[1], yTickSize);
         }
     },
