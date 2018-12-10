@@ -84,10 +84,13 @@ Vue.component('svg-vg', {
                 var series = this.series[i];
                 var newSeries = {};
 
-                // If there's no x data then there's nothing to plot
-                if (series.y) {
+                if (Array.isArray(series)) {
+                    // if data is a single array, then assume its the y-values
+                    newSeries.y = series;
+                } else if (series.y) {
                     newSeries.y = series.y.slice();
                 } else {
+                    // If there's no y data then there's nothing to plot
                     continue;
                 }
                 
@@ -120,7 +123,6 @@ Vue.component('svg-vg', {
             return (this.y2 - this.y1) / (this.rangeY[1] - this.rangeY[0]);
         },
         xTicks: function() {
-            console.log(this.minUnit)
             var xTickSize = getTickSize(this.rangeX[0], this.rangeX[1], this.x1, this.x2, this.xMinUnit);
             return getTicks(this.rangeX[0], this.rangeX[1], xTickSize);
         },
