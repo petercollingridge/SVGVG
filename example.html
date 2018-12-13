@@ -17,6 +17,10 @@
         </select>
 
         <br>
+        <label for="chart-title">Chart title</label>
+        <input id="chart-title" v-model="chartTitle" />
+
+        <br>
         <label for="x-axis-label">x-axis label</label>
         <input id="x-axis-label" v-model="xAxisLabel" />
 
@@ -35,6 +39,7 @@
         <svg-vg
             width="300" height="200"
             :series="series"
+            :chart-title="chartTitle"
             :x-axis-label="xAxisLabel"
             :y-axis-label="yAxisLabel"
             :x-min-unit="xMinUnit"
@@ -61,10 +66,11 @@
                     label: 'Small decimals',
                     value: [{ y: [0.0003, 0.00035, 0.0004, 0.0001, 0.0005, 0.00033] }]
             }, {
-                    label: 'Two series ',
+                    label: 'Two series',
                     value: [[3, 2, 4, 1, 5, 9], [2, 4, 1, 5, 9, 3]]
             }],
             selectedSeries: 0,
+            chartTitle: '',
             xAxisLabel: '',
             yAxisLabel: '',
             xMinUnit: 0,

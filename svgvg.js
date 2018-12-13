@@ -59,16 +59,18 @@ function getTicks(data1, data2, tickSize) {
 }
 
 Vue.component('svg-vg', {
-    props: ['width', 'height', 'series', 'xAxisLabel', 'yAxisLabel', 'xMinUnit', 'yMinUnit'],
+    props: ['width', 'height', 'series', 'chartTitle', 'xAxisLabel', 'yAxisLabel', 'xMinUnit', 'yMinUnit'],
     data: function () {
         return {
             x2: this.width - 5,
-            y1: 5,
         };
     },
     computed: {
         x1: function() {
             return 12 + (this.yAxisLabel ? 12 : 0);
+        },
+        y1: function() {
+            return this.chartTitle ? 25 : 5;
         },
         y2: function() {
             return this.height - 12 - (this.xAxisLabel ? 12 : 0);
@@ -162,13 +164,15 @@ Vue.component('svg-vg', {
         <g class="svgvg-axis-ticks">
             <g v-for="x in xTicks">
                 <line :x1="getX(x)" :y1="y2" :x2="getX(x)" :y2="y2 + 3" />
-                <text class="x-tick-text" :x="getX(x)" :y="y2 + 4">{{x}}</text>
+                <text class="x-tick-text" :x="getX(x)" :y="y2 + 4">{{ x }}</text>
             </g>
             <g v-for="y in yTicks">
                 <line :x1="x1" :y1="getY(y)" :x2="x1 - 3" :y2="getY(y)" />
-                <text class="y-tick-text" :x="x1 - 4" :y="getY(y)">{{y}}</text>
+                <text class="y-tick-text" :x="x1 - 4" :y="getY(y)">{{ y }}</text>
             </g>
         </g>
+
+        <text class="chart-title" :x="width / 2" :y="15">{{ chartTitle }}</text>
 
         <g class="svgvg-axis-labels">
             <text :x="(x1 + x2) / 2" :y="height - 3" :v-if="xAxisLabel">{{ xAxisLabel }}</text>
